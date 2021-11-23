@@ -11,7 +11,7 @@ export type Operator = {
   associativity: 'left' | 'right'
 }
 
-const tokenIsLeftParen = (t:Token | undefined) => t && t.type == 'lparen'
+const tokenIsLeftParen = (t:Token | undefined) => t && t.type === 'lparen'
 
 export default class {
   private table: OperatorSet
@@ -29,8 +29,8 @@ export default class {
   }
 
   parse(input: Token[]): (Token | undefined)[] {
-    let output: (Token | undefined)[] = [],
-        stack: Token[] = []
+    const output: (Token | undefined)[] = []
+    const stack: Token[] = []
 
     input.forEach(token => {
       switch (token.type) {
@@ -73,9 +73,9 @@ export default class {
               break // break while
             }
 
-            const operator = this.getOperator(token),
-                  precedence = operator?.precedence || Infinity,
-                  antecedence = this.getOperator(punctuator)?.precedence || Infinity
+            const operator = this.getOperator(token)
+            const precedence = operator?.precedence || Infinity
+            const antecedence = this.getOperator(punctuator)?.precedence || Infinity
 
             if (precedence > antecedence || precedence === antecedence && operator?.associativity === 'right') {
               break // break loop
@@ -89,7 +89,7 @@ export default class {
     })
 
     while (stack.length) {
-      let token = stack.shift()
+      const token = stack.shift()
       if (!tokenIsLeftParen(token)) {
         throw new Error("Mismatched parentheses.")
       }

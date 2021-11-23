@@ -8,14 +8,15 @@ import type { LimitSpec } from './@types'
  */
 function makeLimitRule(operator: '-'|'+'): (s: string) => LimitSpec {
   return s => {
-    let edge: 'LOW'|'HIGH', qty: number
+    let edge: 'LOW'|'HIGH'
+    let qty: number
 
     if (s.indexOf(operator) > -1) {
-      edge = s.substr(-1) == 'L' ? 'LOW' : 'HIGH'
-      qty = parseInt(s.substring(1).substr(0, s.length - 2) || '1')
+      edge = s.substr(-1) === 'L' ? 'LOW' : 'HIGH'
+      qty = parseInt(s.substring(1).substr(0, s.length - 2) || '1', 10)
     } else {
-      edge = s[1] == 'L' ? 'LOW' : 'HIGH'
-      qty = parseInt(s.substr(2) || '1')
+      edge = s[1] === 'L' ? 'LOW' : 'HIGH'
+      qty = parseInt(s.substr(2) || '1', 10)
     }
 
     return { edge, qty }
@@ -45,7 +46,7 @@ const diceRule:Rule = {
   match: /\d*d\d+/,
   value: s => {
     const [ qty, sides ] = s.split('d')
-    return { qty: parseInt(qty || '1'), sides: parseInt(sides), collapse: true } as any
+    return { qty: parseInt(qty || '1', 10), sides: parseInt(sides, 10), collapse: true } as any
   },
 }
 

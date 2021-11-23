@@ -7,8 +7,8 @@ const makeSumOp = (op: (a: number, b: number) => number) => (a:number[], b:numbe
   if (!a.length || !b.length) {
     return [ NaN ]
   }
-  if (a.length == 1) {
-    if (b.length == 1) {
+  if (a.length === 1) {
+    if (b.length === 1) {
       return [ op(a[0], b[0]) ]
     }
     return b.map(v => op(v, a[0]))
@@ -32,13 +32,13 @@ const minus = () => makeSumOp((a, b) => a - b)
 /**
  * Operation for keeping a quantity of values from a set
  */
-const keep = ({ edge, qty }:LimitSpec) => (a:number[]) => {
-  a.sort((a, b) => a == b ? 0 : a < b ? -1 : 1)
+const keep = ({ edge, qty }:LimitSpec) => (args:number[]) => {
+  args.sort((a, b) => a === b ? 0 : a < b ? -1 : 1)
 
   const output:number[] = []
 
   for (let i = 0; i < qty; ++i) {
-    output.push(edge == 'HIGH' ? a.pop() : a.shift() as any)
+    output.push(edge === 'HIGH' ? args.pop() : args.shift() as any)
   }
 
   return [ output.reduce((a, v) => a + v, 0) ]
@@ -48,18 +48,18 @@ const keep = ({ edge, qty }:LimitSpec) => (a:number[]) => {
 /**
  * Operation for dropping a quantity of values from a set
  */
-const drop = ({ edge, qty }:LimitSpec) => (a:number[]) => {
-  a.sort((a, b) => a == b ? 0 : a < b ? -1 : 1)
+const drop = ({ edge, qty }:LimitSpec) => (args:number[]) => {
+  args.sort((a, b) => a === b ? 0 : a < b ? -1 : 1)
 
   for (let i = 0; i < qty; ++i) {
-    if (edge == 'HIGH') {
-      a.pop()
+    if (edge === 'HIGH') {
+      args.pop()
     } else {
-      a.shift()
+      args.shift()
     }
   }
 
-  return [ a.reduce((a, v) => a + v, 0) ]
+  return [ args.reduce((a, v) => a + v, 0) ]
 }
 
 

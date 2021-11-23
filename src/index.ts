@@ -70,7 +70,7 @@ function parseNotation(input: string): { dice: DiceList, plan: Plan } {
     // first, inflate any multipliers into discrete terms
     const multiMatch = input.matchAll(multiplierRegex)
     for (const [ parsed, notation, multiplier ] of multiMatch) {
-      const replace = new Array(parseInt(multiplier)).fill(notation).join('+')
+      const replace = new Array(parseInt(multiplier, 10)).fill(notation).join('+')
       input = input.replace(parsed, replace)
     }
 
@@ -78,8 +78,8 @@ function parseNotation(input: string): { dice: DiceList, plan: Plan } {
     // to the list for return
     const matches = input.matchAll(diceRegex)
     for (const [ , c, s ] of matches) {
-      const count = c ? parseInt(c) : 1
-      const sides = parseInt(s)
+      const count = c ? parseInt(c, 10) : 1
+      const sides = parseInt(s, 10)
       for (let i = 0; i < count; ++i) {
         dice.push(`d${sides}`)
       }
@@ -116,10 +116,10 @@ function handleResult(dice: DiceList, plan: Plan): ResultHandler {
 /**
  * Generates the plan executor function.
  */
-function makePlanExecutor(__dice: DiceList, plan: Plan) {
+function makePlanExecutor(DICE: DiceList, plan: Plan) {
   return (roll: Roll): number[] => {
     // we need to take replicas of these lists, so we can mutate them safely
-    const dice = [ ...__dice ]
+    const dice = [ ...DICE ]
     const outcomes = [ ...roll ]
 
     /**
@@ -148,12 +148,12 @@ function makePlanExecutor(__dice: DiceList, plan: Plan) {
      */
     function handleOperand(op:Operand<string, any>): number[] {
       // handle a simple integer
-      if (op.type == 'number') {
+      if (op.type === 'number') {
         return [ op.value ]
       }
 
       // handle a dice roll (eg. 2d20)
-      if (op.type == 'dice') {
+      if (op.type === 'dice') {
         const { qty, sides, collapse } = op.value
 
         const output: number[] = []
@@ -170,7 +170,7 @@ function makePlanExecutor(__dice: DiceList, plan: Plan) {
             throw new Error('Parser malfunction.')
           }
 
-          if (typeof poppedRoll == 'undefined') {
+          if (typeof poppedRoll === 'undefined') {
             throw new Error('Array underflow.')
           }
 
